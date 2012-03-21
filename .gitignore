@@ -1,0 +1,9 @@
+Debug/*
+Winoku/Debug/*
+*.swp
+*.suo
+*.ncb
+*.user
+*.sdf
+*.opensdf
+ipch/*
