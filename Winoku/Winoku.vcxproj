@@ -76,17 +76,23 @@
     <None Include="Winoku.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlphaBeta.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="ExampleAI.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Player1.h" />
+    <ClInclude Include="PlayerDaybreak.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AlphaBeta.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="ExampleAI.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player1.cpp" />
+    <ClCompile Include="PlayerDaybreak.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Winoku.rc" />

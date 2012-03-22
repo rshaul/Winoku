@@ -1,18 +1,26 @@
 #include <assert.h>
 #include <time.h>
 #include <stdlib.h>
+#include <typeinfo>
 #include "stdafx.h"
 #include "resource.h"
 #include "Board.h"
 #include "Player.h"
 #include "ExampleAI.h"
+#include "Player1.h"
+#include "PlayerDaybreak.h"
+
+/**** SET WHICH AI PLAY HERE ****/
+#define PLAYER1AI Player1
+#define PLAYER2AI PlayerDaybreak
+/********************************/
 
 using namespace std;
 
 #define MAX_LOADSTRING 100
 
 // Each player gets 3 minutes
-#define PLAYER_TIME 3*60*1000	// in milliseconds
+#define PLAYER_TIME 11*60*1000	// in milliseconds
 
 #define USE_THREADS true
 
@@ -38,10 +46,10 @@ TCHAR szTitle[MAX_LOADSTRING];			// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];	// the main window class name
 
 Board gameBoard;
-Player *player1;
-Player *player2;
+Player *player1; // ai for player 1
+Player *player2; // ai for player 2
 Player *currentPlayer; // Who's current turn
-bool gameOver; // Has a player won or has there been a draw
+Winner winner; // Has a player won or has there been a draw
 bool gameRunning; // Is the game running until completion
 bool thinking; // Are we waiting for a response from AI
 int timeRemainingPlayer1; // in milliseconds
@@ -60,15 +68,11 @@ void Reset() {
 	gameBoard.Clear();
 	timeRemainingPlayer1 = PLAYER_TIME;
 	timeRemainingPlayer2 = PLAYER_TIME;
-	gameOver = false;
+	winner = WinnerNone;
 	gameRunning = false;
 	thinking = false;
-	
-	/***** SET AI HERE *****/
-	player1 = new ExampleAI();		// ai for player 1
-	player2 = new ExampleAI();		// ai for player 2
-	/* ********************/
-	
+	player1 = new PLAYER1AI();
+	player2 = new PLAYER2AI();
 	currentPlayer = player1;
 }
 
@@ -87,6 +91,12 @@ Player* OtherPlayer() {
 }
 void WindowNeedsDisplay() {
 	InvalidateRect(hWnd, NULL, 1);
+}
+bool GameOver() {
+	return winner != WinnerNone || timeRemainingPlayer1 < 0 || timeRemainingPlayer2 < 0;
+}
+Winner WinnerForPlayer(Player *player) {
+	return IsPlayer1(player) ? WinnerPlayer1 : WinnerPlayer2;
 }
 
 // Play a single round of Gomoku
@@ -107,14 +117,8 @@ void PlayRound() {
 
 	(OtherPlayer())->OpponentDidMove(row, col);
 
-	// game over?
-	Winner winner;
-	if (SecondsRemainingForPlayer(currentPlayer) < 0
-		|| gameBoard.IsSolved(row, col, winner)) {
-		gameOver = true;
-	} else {
-		// Game not over, swap players
-		currentPlayer = OtherPlayer();
+	if (!gameBoard.IsSolved(row, col, winner)) {
+		currentPlayer = OtherPlayer(); // Swap players
 	}
 
 	WindowNeedsDisplay();
@@ -123,7 +127,7 @@ void PlayRound() {
 // Play game until completion
 void PlayGame() {
 	gameRunning = true;
-	while (gameRunning && !gameOver) {
+	while (gameRunning && !GameOver()) {
 		PlayRound();
 	}
 	gameRunning = false;
@@ -193,34 +197,63 @@ void DrawPieces(HDC hdc) {
 	DeleteObject(pen);
 }
 
-wstring FormatTimeRemaining(Player *player) {
+string FormatTimeRemaining(Player *player) {
 	int totalSeconds = SecondsRemainingForPlayer(player);
 	int minutes = totalSeconds / 60;
 	int seconds = totalSeconds % 60;
-	WCHAR buffer[5];
-	buffer[0] = L'0' + (totalSeconds/60);
-	buffer[1] = L':';
-	buffer[2] = L'0' + (seconds / 10);
-	buffer[3] = L'0' + seconds % 10;
+	if (minutes > 9) {
+		minutes = 9;
+		seconds = 59;
+	}
+	char buffer[5];
+	buffer[0] = '0' + minutes;
+	buffer[1] = ':';
+	buffer[2] = '0' + (seconds / 10);
+	buffer[3] = '0' + seconds % 10;
 	buffer[4] = 0;
-	return wstring(buffer);
+	return string(buffer);
+}
+
+string AIName(Player *player) {
+	string name;
+	if (IsPlayer1(player)) name = typeid(PLAYER1AI).name();
+	else name = typeid(PLAYER2AI).name();
+	return name;
+}
+
+wstring ToWString(string s) {
+	wstring w(s.length(), L'');
+	copy(s.begin(), s.end(), w.begin());
+	return w;
 }
 
 void DrawClocks(HDC hdc) {
-	wstring clock1 = L"Player1 (RED) - " + FormatTimeRemaining(player1);
-	wstring clock2 = L"Player2 (BLU) - " + FormatTimeRemaining(player2);
-	wstring suffix = (thinking) ? L"  ..." : L"  <";
-	if (IsPlayer1Turn()) clock1.append(suffix);
-	else clock2.append(suffix);
-	TextOut(hdc, CLOCK1_X, CLOCK1_Y, clock1.c_str(), clock1.size());
-	TextOut(hdc, CLOCK2_X, CLOCK2_Y, clock2.c_str(), clock2.size());
+	string clock1 = "Player1 (RED " + AIName(player1) + ") - " + FormatTimeRemaining(player1);
+	string clock2 = "Player2 (BLU " + AIName(player2) + ") - " + FormatTimeRemaining(player2);
+	string suffix = (thinking) ? "  ..." : "  <";
+	if (IsPlayer1Turn()) clock1 += suffix;
+	else clock2 += suffix;
+
+	wstring w1 = ToWString(clock1);
+	wstring w2 = ToWString(clock2);
+	TextOut(hdc, CLOCK1_X, CLOCK1_Y, w1.c_str(), w1.size());
+	TextOut(hdc, CLOCK2_X, CLOCK2_Y, w2.c_str(), w2.size());
 }
 
 void DrawDirections(HDC hdc) {
 	wstring m;
-	if (gameOver) m = L"Game over!";
-	else if (gameRunning) m = L"Game is in progress...";
-	else m = L"Click to advance once. Space to play out rest of game.";
+	if (GameOver()) {
+		m = L"Game over!";
+		if (winner == WinnerPlayer1) m.append(L" Player1 Wins!");
+		if (winner == WinnerPlayer2) m.append(L" Player2 Wins!");
+		if (winner == WinnerDraw) m.append(L" Draw!");
+		if (timeRemainingPlayer1 < 0) m.append(L" Player1 out of time.");
+		if (timeRemainingPlayer2 < 0) m.append(L" Player2 out of time.");
+	} else if (gameRunning) {
+		m = L"Game is in progress...";
+	} else {
+		m = L"Click to advance once. Space to play out rest of game.";
+	}
 	TextOut(hdc, DIRECTIONS_X, DIRECTIONS_Y, m.c_str(), m.size());
 }
 
@@ -261,9 +294,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
+	srand((unsigned int)time(NULL));
 	Reset();
 
- 	// TODO: Place code here.
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -399,12 +432,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_LBUTTONDOWN:
-		if (gameOver) Reset();
+		if (GameOver()) Reset();
 		if (!gameRunning) StartRoundThread();
 		break;
 	case WM_KEYUP:
 		if (wParam == VK_SPACE) {
-			if (gameOver) Reset();
+			if (GameOver()) Reset();
 			if (!gameRunning) StartGameThread();
 		}
 		break;

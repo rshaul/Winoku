@@ -21,7 +21,7 @@ void ExampleAI::GetMove(int &row, int &col, int secondsRemaining) {
 		row = rand() % BoardSize;
 		col = rand() % BoardSize;
 	} while (board[row][col] != 0);
-	// Record our move
+	// Record my move
 	board[row][col] = 1;
 	// Pretend like this took some work
 	Sleep(50);

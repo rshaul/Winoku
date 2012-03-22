@@ -9,29 +9,23 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Misc Files">
+      <UniqueIdentifier>{f648aa3e-1494-4a06-83b8-cb28b02327a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Misc Files\Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Misc Files\Resource Files</Filter>
     </None>
     <None Include="Winoku.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Misc Files\Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -39,6 +33,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExampleAI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Misc Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Misc Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Misc Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AlphaBeta.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerDaybreak.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -52,10 +64,19 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AlphaBeta.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Player1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerDaybreak.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Winoku.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Misc Files\Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>
