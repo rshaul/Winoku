@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <time.h>
 #include <stdlib.h>
 #include <typeinfo>
 #include "stdafx.h"
@@ -9,20 +8,24 @@
 #include "ExampleAI.h"
 #include "Player1.h"
 #include "PlayerDaybreak.h"
+#include "Ares.h"
+#include "Platypus.h"
+
 
 /**** SET WHICH AI PLAY HERE ****/
-#define PLAYER1AI Player1
-#define PLAYER2AI PlayerDaybreak
+#define PLAYER1AI Ares
+#define PLAYER2AI Platypus
 /********************************/
+
 
 using namespace std;
 
 #define MAX_LOADSTRING 100
 
 // Each player gets 3 minutes
-#define PLAYER_TIME 11*60*1000	// in milliseconds
+#define PLAYER_TIME 3*60*1000	// in milliseconds
 
-#define USE_THREADS true
+#define USE_THREADS false
 
 // Display configuration options
 #define CLOCK1_Y 10
@@ -33,17 +36,17 @@ using namespace std;
 #define DIRECTIONS_Y 60
 #define GRID_X 30
 #define GRID_Y 80
-#define GRID_CELL_SIZE 25	// width of each cell
-#define GRID_BORDER_SIZE 2	// width of the border between cells
-#define GRID_CELL_PADDING 1 // How much white space inside each cell
+#define GRID_CELL_SIZE 25 // width of each cell
+#define GRID_BORDER_SIZE 2 // width of the border between cells
+#define GRID_CELL_PADDING 1 // amount of white space inside each cell
 
 #define GRID_LENGTH ((GRID_CELL_SIZE * BoardSize) + (GRID_BORDER_SIZE * (BoardSize+1)))
 
 // Global Variables:
-HINSTANCE hInst;						// current instance
-HWND hWnd;								// current window
-TCHAR szTitle[MAX_LOADSTRING];			// The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING];	// the main window class name
+HINSTANCE hInst; // current instance
+HWND hWnd; // current window
+TCHAR szTitle[MAX_LOADSTRING]; // The title bar text
+TCHAR szWindowClass[MAX_LOADSTRING]; // the main window class name
 
 Board gameBoard;
 Player *player1; // ai for player 1
@@ -261,7 +264,7 @@ void DrawDirections(HDC hdc) {
 
 DWORD WINAPI RoundThread(LPVOID lpParam) {
 	// rand needs to be seeded on every thread creation
-	srand((unsigned int)time(NULL));
+	srand(GetTime());
 	PlayRound();
 	return 0;
 }
@@ -273,7 +276,7 @@ void StartRoundThread() {
 }
 
 DWORD WINAPI GameThread(LPVOID lpParam) {
-	srand((unsigned int)time(NULL));
+	srand(GetTime());
 	PlayGame();
 	return 0;
 }
@@ -294,7 +297,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	srand((unsigned int)time(NULL));
+	srand(GetTime());
 	Reset();
 
 	MSG msg;

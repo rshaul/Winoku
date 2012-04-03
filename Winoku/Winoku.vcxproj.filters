@@ -53,6 +53,15 @@
     <ClInclude Include="PlayerDaybreak.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Ares.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platypus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatypusFeatures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp">
@@ -71,6 +80,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlayerDaybreak.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ares.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Platypus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

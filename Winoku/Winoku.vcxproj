@@ -77,8 +77,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlphaBeta.h" />
+    <ClInclude Include="Ares.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="ExampleAI.h" />
+    <ClInclude Include="Platypus.h" />
+    <ClInclude Include="PlatypusFeatures.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Player1.h" />
     <ClInclude Include="PlayerDaybreak.h" />
@@ -88,9 +91,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlphaBeta.cpp" />
+    <ClCompile Include="Ares.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="ExampleAI.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Platypus.cpp" />
     <ClCompile Include="Player1.cpp" />
     <ClCompile Include="PlayerDaybreak.cpp" />
   </ItemGroup>

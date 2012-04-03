@@ -23,18 +23,25 @@ class Board
 {
 	public:
 	Board();
+	Board(const Board &other);
+	Board& operator= (const Board &other);
+
 	void SetPiece(int row, int col, Piece piece);
-	Piece GetPiece(int row, int col);
+	Piece GetPiece(int row, int col) const;
 	void Clear();
+	int NumberOfPieces();
 	
 	// Checks to see if there was a winner at a position
 	// Returns true if game is over
-	bool IsSolved(int row, int col, Winner &whoWon);
+	bool IsSolved(int row, int col, Winner &whoWon) const;
+
+	void Print();
 
 	private:
-	Piece pieces[BoardSize][BoardSize];
-	bool IsSolved(int row, int col, Piece piece);
 	int pieceCount;
+	Piece pieces[BoardSize][BoardSize];
+	bool IsSolved(int row, int col, Piece piece) const;
+	bool CheckCount(int row, int col, Piece piece, int &count) const;
 };
 
 #endif
