@@ -7,7 +7,41 @@
 class PlatypusNode;
 bool PlatypusNodeSorter(PlatypusNode *a, PlatypusNode *b);
 
-class PlatypusNode : public SearchNode<PlatypusNode>
+
+// FIND EMPTY BOARD PIECES
+
+int Clamp(int pos) {
+	if (pos < 0) return 0;
+	if (pos >= BoardSize) return BoardSize-1;
+	return pos;
+}
+
+void GetEmptyAround(Board *board, int row, int col, bool empty[BoardSize][BoardSize]) {
+	const int depth = 1;
+	for (int r=Clamp(row-depth); r <= Clamp(row+depth); r++) {
+		for (int c=Clamp(col-depth); c <= Clamp(col+depth); c++) {
+			if (board->GetPiece(r, c) == PieceNone) {
+				empty[r][c] = true;
+			}
+		}
+	}
+}
+
+void GetEmptySpotsAroundPlayers(Board *board, bool empty[BoardSize][BoardSize]) {
+	for (int row=0; row < BoardSize; row++)
+		for (int col=0; col < BoardSize; col++)
+			empty[row][col] = false;
+
+	for (int row=0; row < BoardSize; row++) {
+		for (int col=0; col < BoardSize; col++) {
+			if (board->GetPiece(row, col) != PieceNone) {
+				GetEmptyAround(board, row, col, empty);
+			}
+		}
+	}
+}
+
+class PlatypusNode
 {
 	public:
 	bool IsTerminal() {
@@ -37,11 +71,6 @@ class PlatypusNode : public SearchNode<PlatypusNode>
 			valueHeuristic = p1 - p2;
 		}
 		return valueHeuristic;
-	}
-
-	vector<PlatypusNode*> Children() {
-		if (nodes.size() == 0) BuildChildren();
-		return nodes;
 	}
 
 	int moveRow;
@@ -96,11 +125,8 @@ class PlatypusNode : public SearchNode<PlatypusNode>
 
 	void BuildChildren() {
 		bool empty[BoardSize][BoardSize];
-		for (int row=0; row < BoardSize; row++)
-			for (int col=0; col < BoardSize; col++)
-				empty[row][col] = false;
 
-		GetEmptySpotsAroundPlayers(empty);
+		GetEmptySpotsAroundPlayers(board, empty);
 
 		for (int row=0; row < BoardSize; row++) {
 			for (int col=0; col < BoardSize; col++) {
@@ -117,33 +143,6 @@ class PlatypusNode : public SearchNode<PlatypusNode>
 
 		//sort(nodes.begin(), nodes.end(), PlatypusNodeSorter);
 	}
-
-	void GetEmptySpotsAroundPlayers(bool empty[BoardSize][BoardSize]) {
-		for (int row=0; row < BoardSize; row++) {
-			for (int col=0; col < BoardSize; col++) {
-				if (board->GetPiece(row, col) != PieceNone) {
-					GetEmptyAround(row, col, empty);
-				}
-			}
-		}
-	}
-
-	int Clamp(int pos) const {
-		if (pos < 0) return 0;
-		if (pos >= BoardSize) return BoardSize-1;
-		return pos;
-	}
-
-	void GetEmptyAround(int row, int col, bool empty[BoardSize][BoardSize]) {
-		const int depth = 1;
-		for (int r=Clamp(row-depth); r <= Clamp(row+depth); r++) {
-			for (int c=Clamp(col-depth); c <= Clamp(col+depth); c++) {
-				if (board->GetPiece(r, c) == PieceNone) {
-					empty[r][c] = true;
-				}
-			}
-		}
-	}
 };
 
 bool PlatypusNodeSorter(PlatypusNode *a, PlatypusNode *b) {
@@ -154,16 +153,30 @@ void Platypus::OpponentDidMove(int row, int col) {
 	board.SetPiece(row, col, PiecePlayer2);
 }
 
+float AlphaBeta(Board *board, int depth, float alpha, float beta, bool maxNode) {
+	return 0;
+}
+
 void Platypus::GetMove(int &row, int &col, int secondsLeft) {
 	if (board.NumberOfPieces() == 0) {
 		row = 9;
 		col = 9;
 	} else {
 		boardsExamined = 0;
-		PlatypusNode origin(&board);
-		vector<PlatypusNode*> children = origin.Children();
+		/*
+		bool empty[BoardSize][BoardSize];
+		GetEmptySpotsAroundPlayers(&board, empty);
+
 		PlatypusNode* maxChild = NULL;
 		float maxValue = INT_MIN;
+		for (int row=0; row < BoardSize; row++) {
+			for (int col=0; col < BoardSize; col++) {
+				if (empty[row][col]) {
+					board.SetPiece(row, col, PiecePlayer1);
+					float value = AlphaBeta(&board, 3, 
+				}
+			}
+		}
 		for (unsigned int i=0; i < children.size(); i++) {
 			PlatypusNode *child = children[i];
 			float value = AlphaBetaN(child, 3, false);
@@ -182,6 +195,7 @@ void Platypus::GetMove(int &row, int &col, int secondsLeft) {
 		//PlatypusNode child = AlphaBetaSearch(&origin, 2);
 		row = maxChild->moveRow;
 		col = maxChild->moveCol;
+		*/
 	}
 	board.SetPiece(row, col, PiecePlayer1);
 }

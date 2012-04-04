@@ -4,6 +4,8 @@
 #include "Board.h"
 #include "Player.h"
 
+class PlatypusNode;
+
 class Platypus : public Player
 {
 	void GetMove(int &row, int &col, int secondsLeft);

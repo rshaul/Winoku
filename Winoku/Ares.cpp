@@ -692,14 +692,14 @@ int Ares::getHeuristic (int depth, char winner)
 {
 	int heu, totalOffset, myPoints, opponentPoints; // newOffset;
 
-	two_P_BB *= 0; two_P_BO *= 8; two_P_OO *= 40; 
-	two_T_BB *= 0; two_T_BO *= 8; two_T_OO *= 40; 
+	two_P_BB *= 0; two_P_BO *= 80; two_P_OO *= 400; 
+	two_T_BB *= 0; two_T_BO *= 80; two_T_OO *= 1400; 
 		
-	three_P_BB *= 0; three_P_BO *= 27; three_P_OO *= 235; 	
-	three_T_BB *= 0; three_T_BO *= 27; three_T_OO *= 235; 
+	three_P_BB *= 0; three_P_BO *= 270; three_P_OO *= 2350; 	
+	three_T_BB *= 0; three_T_BO *= 270; three_T_OO *= 2350; 
 		
-	four_P_BB *= 0; four_P_BO *= 556; four_P_OO *= 1280; 
-	four_T_BB *= 0; four_T_BO *= 556; four_T_OO *= 1280; 
+	four_P_BB *= 0; four_P_BO *= 2560; four_P_OO *= 12800; 
+	four_T_BB *= 0; four_T_BO *= 2560; four_T_OO *= 12800; 
 
 	myPoints = two_P_BO + two_P_OO + three_P_BO + 
 			   three_P_OO + four_P_BO + four_P_OO;
