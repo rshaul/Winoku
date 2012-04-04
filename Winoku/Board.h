@@ -39,7 +39,7 @@ class Board
 
 	private:
 	int pieceCount;
-	Piece pieces[BoardSize][BoardSize];
+	Piece pieces[BoardSize*BoardSize];
 	bool IsSolved(int row, int col, Piece piece) const;
 	bool CheckCount(int row, int col, Piece piece, int &count) const;
 };

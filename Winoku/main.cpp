@@ -14,9 +14,8 @@
 
 /**** SET WHICH AI PLAY HERE ****/
 #define PLAYER1AI Ares
-#define PLAYER2AI Platypus
+#define PLAYER2AI Ares
 /********************************/
-
 
 using namespace std;
 

@@ -36,7 +36,7 @@ Board& Board::operator=(const Board &other) {
 	pieceCount = other.pieceCount;
 	for (int row=0; row < BoardSize; row++)
 		for (int col=0; col < BoardSize; col++)
-			pieces[row][col] = other.pieces[row][col];
+			SetPiece(row, col, other.GetPiece(row, col));
 	return *this;
 }
 
@@ -44,30 +44,32 @@ Board::Board(const Board &other) {
 	pieceCount = other.pieceCount;
 	for (int row=0; row < BoardSize; row++)
 		for (int col=0; col < BoardSize; col++)
-			pieces[row][col] = other.pieces[row][col];
+			SetPiece(row, col, other.GetPiece(row, col));
 }
 
 void Board::Clear() {
 	pieceCount = 0;
 	for (int row=0; row < BoardSize; row++)
 		for (int col=0; col < BoardSize; col++)
-			pieces[row][col] = PieceNone;
+			SetPiece(row, col, PieceNone);
 }
 
+/*
 void BoundsCheck(int row, int col) {
 	assert(row >= 0 && row < BoardSize);
 	assert(col >= 0 && col < BoardSize);
 }
+*/
 
-void Board::SetPiece(int row, int col, Piece piece) {
-	BoundsCheck(row, col);
-	if (pieces[row][col] == PieceNone && piece != PieceNone) pieceCount++;
-	pieces[row][col] = piece;
+inline void Board::SetPiece(int row, int col, Piece piece) {
+	//BoundsCheck(row, col);
+	if (pieces[row*BoardSize+col] == PieceNone && piece != PieceNone) pieceCount++;
+	pieces[row*BoardSize+col] = piece;
 }
 
-Piece Board::GetPiece(int row, int col) const {
-	BoundsCheck(row, col);
-	return pieces[row][col];
+inline Piece Board::GetPiece(int row, int col) const {
+	//BoundsCheck(row, col);
+	return pieces[row*BoardSize+col];
 }
 
 int Board::NumberOfPieces() {
@@ -75,7 +77,7 @@ int Board::NumberOfPieces() {
 }
 
 bool Board::IsSolved(int row, int col, Winner &whoWon) const {
-	BoundsCheck(row, col);
+	//BoundsCheck(row, col);
 	whoWon = WinnerNone;
 	if (IsSolved(row, col, PiecePlayer1)) {
 		whoWon = WinnerPlayer1;
@@ -90,7 +92,7 @@ bool Board::IsSolved(int row, int col, Winner &whoWon) const {
 }
 
 bool Board::CheckCount(int row, int col, Piece piece, int &count) const {
-	if (pieces[row][col] == piece) count++;
+	if (GetPiece(row, col) == piece) count++;
 	else count = 0;
 	return (count == WinCount);
 }

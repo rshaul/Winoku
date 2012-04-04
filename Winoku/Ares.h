@@ -19,12 +19,13 @@ class Ares : public Player
 	public:
 	
 		virtual void OpponentDidMove(int row, int col);
-		virtual void GetMove(int &row, int &col, int secondsLeft);
+		virtual void GetMove(int &row, int &col, int s);
 		Ares();
 
 	private:
 
 		bool block;
+		recordMov block_2_OO;	// block coord's for run lengh 2
 		recordMov block_3_OO;	// block coord's for run lengh 3
 		recordMov block_4_BO;	// block coord's for run lengh 4
 	

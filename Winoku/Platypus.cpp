@@ -16,20 +16,21 @@ class PlatypusNode : public SearchNode<PlatypusNode>
 	}
 
 	float ValueHeuristic() {
+		return 0;
 		if (valueHeuristic < 0) {
-			PlatypusFeatures otherFeatures(board, OtherPlayer());
-			PlatypusFeatures features(board, movePlayer);
+			PlatypusFeatures otherFeatures(board, PiecePlayer2);
+			PlatypusFeatures features(board, PiecePlayer1);
 
 			if (otherFeatures.Row5 > 0) {
-				valueHeuristic = -FLT_MAX;
+				valueHeuristic = -1000000;
 			} else if (otherFeatures.Row4Both > 0) {
-				valueHeuristic = -FLT_MAX/100;
+				valueHeuristic = -100000;
 			} else if (otherFeatures.Row3Both > 0) {
-				valueHeuristic = -FLT_MAX/1000;
+				valueHeuristic = -10000;
 			} else if (features.Row5 > 0) {
-				valueHeuristic = FLT_MAX;
+				valueHeuristic = 1000000;
 			} else if (features.Row4Both > 0) {
-				valueHeuristic = FLT_MAX/100;
+				valueHeuristic = 100000;
 			} else {
 				float score2one = 1;
 				float score2both = 4;
@@ -135,7 +136,7 @@ class PlatypusNode : public SearchNode<PlatypusNode>
 			}
 		}
 
-		sort(nodes.begin(), nodes.end(), PlatypusNodeSorter);
+		//sort(nodes.begin(), nodes.end(), PlatypusNodeSorter);
 	}
 
 	void GetEmptySpotsAroundPlayers(bool empty[BoardSize][BoardSize]) {
@@ -167,7 +168,7 @@ class PlatypusNode : public SearchNode<PlatypusNode>
 };
 
 bool PlatypusNodeSorter(PlatypusNode *a, PlatypusNode *b) {
-	return a->ValueHeuristic() > b->ValueHeuristic();
+	return a->ValueHeuristic() < b->ValueHeuristic();
 }
 
 void Platypus::OpponentDidMove(int row, int col) {
@@ -179,10 +180,29 @@ void Platypus::GetMove(int &row, int &col, int secondsLeft) {
 		row = 9;
 		col = 9;
 	} else {
+		boardsExamined = 0;
 		PlatypusNode origin(&board);
-		PlatypusNode child = AlphaBetaSearch(&origin, 2);
-		row = child.moveRow;
-		col = child.moveCol;
+		vector<PlatypusNode*> children = origin.Children();
+		PlatypusNode* maxChild = NULL;
+		float maxValue = INT_MIN;
+		for (unsigned int i=0; i < children.size(); i++) {
+			PlatypusNode *child = children[i];
+			float value = AlphaBetaN(child, 3, false);
+			if (value >= maxValue) {
+				maxValue = value;
+				maxChild = child;
+			}
+		}
+		char *buffer = new char[1000];
+		OutputDebugStringA("BOARDS EXAMINED: ");
+		_itoa_s(boardsExamined, buffer, 1000, 10);
+		OutputDebugStringA(buffer);
+		OutputDebugStringA("\n");
+		delete buffer;
+
+		//PlatypusNode child = AlphaBetaSearch(&origin, 2);
+		row = maxChild->moveRow;
+		col = maxChild->moveCol;
 	}
 	board.SetPiece(row, col, PiecePlayer1);
 }

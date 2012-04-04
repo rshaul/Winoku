@@ -57,6 +57,7 @@ NodeValue<T> AlphaBetaSearch(T *origin, int depth, NodeValue<T> alpha, NodeValue
 	if (maxNode) {
 		for (unsigned int i=0; i < children.size(); i++) {
 			T *child = children[i];
+
 			NodeValue<T> search = AlphaBetaSearch(child, depth-1, alpha, beta, false);
 			if (search.value >= alpha.value) {
 				alpha.node = *child;
@@ -74,6 +75,46 @@ NodeValue<T> AlphaBetaSearch(T *origin, int depth, NodeValue<T> alpha, NodeValue
 				beta.value = search.value;
 			}
 			if (beta.value <= alpha.value) break;
+		}
+		return beta;
+	}
+}
+
+template<class T>
+float AlphaBetaN(T *origin, int depth, bool maxNode) {
+	return AlphaBetaN(origin, depth, -FLT_MAX, FLT_MAX, maxNode);
+}
+
+static int boardsExamined = 0;
+
+template<class T>
+float AlphaBetaN(T *origin, int depth, float alpha, float beta, bool maxNode) {
+	if (depth == 0 || origin->IsTerminal()) {
+		boardsExamined++;
+		return origin->ValueHeuristic();
+	}
+
+	vector<T*> children = origin->Children();
+	assert(children.size() > 0);
+
+	if (maxNode) {
+		for (unsigned int i=0; i < children.size(); i++) {
+			T *child = children[i];
+			float search = AlphaBetaN(child, depth-1, alpha, beta, false);
+			if (search > alpha) {
+				alpha = search;
+			}
+			if (beta <= alpha) break;
+		}
+		return alpha;
+	} else {
+		for (unsigned int i=0; i < children.size(); i++) {
+			T *child = children[i];
+			float search = AlphaBetaN(child, depth-1, alpha, beta, true);
+			if (search < beta) {
+				beta = search;
+			}
+			if (beta <= alpha) break;
 		}
 		return beta;
 	}
