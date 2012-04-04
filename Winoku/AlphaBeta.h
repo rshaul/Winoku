@@ -29,58 +29,6 @@ struct NodeValue
 };
 
 template<class T>
-NodeValue<T> AlphaBetaSearch(const T *origin, int depth, float alpha, float beta, bool maxNode);
-
-/* EXTERNAL FILES CALL THIS FUNCTION */
-/* ASSUMES T inherits from SearchNode */
-template<class T>
-T AlphaBetaSearch(T *origin, int maxDepth) {
-	NodeValue<T> alpha;
-	alpha.value = -FLT_MAX;
-	NodeValue<T> beta;
-	beta.value = FLT_MAX;
-	return AlphaBetaSearch(origin, maxDepth, alpha, beta, true).node;
-}
-
-template<class T>
-NodeValue<T> AlphaBetaSearch(T *origin, int depth, NodeValue<T> alpha, NodeValue<T> beta, bool maxNode) {
-	if (depth == 0 || origin->IsTerminal()) {
-		NodeValue<T> r;
-		r.node = *origin;
-		r.value = origin->ValueHeuristic();
-		return r;
-	}
-
-	vector<T*> children = origin->Children();
-	assert(children.size() > 0);
-
-	if (maxNode) {
-		for (unsigned int i=0; i < children.size(); i++) {
-			T *child = children[i];
-
-			NodeValue<T> search = AlphaBetaSearch(child, depth-1, alpha, beta, false);
-			if (search.value >= alpha.value) {
-				alpha.node = *child;
-				alpha.value = search.value;
-			}
-			if (beta.value <= alpha.value) break;
-		}
-		return alpha;
-	} else {
-		for (unsigned int i=0; i < children.size(); i++) {
-			T *child = children[i];
-			NodeValue<T> search = AlphaBetaSearch(child, depth-1, alpha, beta, true);
-			if (search.value <= beta.value) {
-				beta.node = *child;
-				beta.value = search.value;
-			}
-			if (beta.value <= alpha.value) break;
-		}
-		return beta;
-	}
-}
-
-template<class T>
 float AlphaBetaN(T *origin, int depth, bool maxNode) {
 	return AlphaBetaN(origin, depth, -FLT_MAX, FLT_MAX, maxNode);
 }

@@ -15,47 +15,26 @@ class PlatypusNode : public SearchNode<PlatypusNode>
 		return board->IsSolved(moveRow, moveCol, win);
 	}
 
+	float HeuristicForPlayer(Piece player) {
+		PlatypusFeatures features(board, player);
+		const float score2one = 1;
+		const float score2both = 4;
+		const float score3one = 2;
+		const float score3both = 8;
+		const float score4one = 0;
+		const float score4both = 100;
+		const float score5 = 10000;
+		return (features.Row2One * score2one) + (features.Row2Both * score2both)
+				+ (features.Row3One * score3one) + (features.Row3Both * score3both)
+				+ (features.Row4One * score4one) + (features.Row4Both * score4both)
+				+ (features.Row5 * score5);
+	}
+
 	float ValueHeuristic() {
-		return 0;
-		if (valueHeuristic < 0) {
-			PlatypusFeatures otherFeatures(board, PiecePlayer2);
-			PlatypusFeatures features(board, PiecePlayer1);
-
-			if (otherFeatures.Row5 > 0) {
-				valueHeuristic = -1000000;
-			} else if (otherFeatures.Row4Both > 0) {
-				valueHeuristic = -100000;
-			} else if (otherFeatures.Row3Both > 0) {
-				valueHeuristic = -10000;
-			} else if (features.Row5 > 0) {
-				valueHeuristic = 1000000;
-			} else if (features.Row4Both > 0) {
-				valueHeuristic = 100000;
-			} else {
-				float score2one = 1;
-				float score2both = 4;
-				float score3one = 2;
-				float score3both = 8;
-				float score4one = 0;
-
-				valueHeuristic =
-					(features.Row2One * score2one) + (features.Row2Both * score2both)
-					+ (features.Row3One * score3one) + (features.Row3Both * score3both)
-					+ (features.Row4One * score4one);
-
-				/* DEBUG
-				board->Print();
-				char buffer[20];
-				if (movePlayer == PiecePlayer1) {
-					OutputDebugStringA("P1 SCORE: ");
-				} else {
-					OutputDebugStringA("P2 SCORE: ");
-				}
-				_itoa_s((int)valueHeuristic, buffer, 20, 10);
-				OutputDebugStringA(buffer);
-				OutputDebugStringA("\n");
-				//*/
-			}
+		if (valueHeuristic == FLT_MAX) {
+			float p1 = HeuristicForPlayer(PiecePlayer1);
+			float p2 = HeuristicForPlayer(PiecePlayer2);
+			valueHeuristic = p1 - p2;
 		}
 		return valueHeuristic;
 	}
@@ -74,14 +53,14 @@ class PlatypusNode : public SearchNode<PlatypusNode>
 		this->moveRow = 0;
 		this->moveCol = 0;
 		this->movePlayer = PiecePlayer1;
-		this->valueHeuristic = -1;
+		this->valueHeuristic = FLT_MAX;
 	}
 	void Init(const PlatypusNode &other) {
 		this->board = new Board(*other.board);
 		this->moveRow = other.moveRow;
 		this->moveCol = other.moveCol;
 		this->movePlayer = other.movePlayer;
-		this->valueHeuristic = -1;
+		this->valueHeuristic = FLT_MAX;
 	}
 
 	PlatypusNode() {

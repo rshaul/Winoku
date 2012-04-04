@@ -34,24 +34,18 @@ void Board::Print() {
 
 Board& Board::operator=(const Board &other) {
 	pieceCount = other.pieceCount;
-	for (int row=0; row < BoardSize; row++)
-		for (int col=0; col < BoardSize; col++)
-			SetPiece(row, col, other.GetPiece(row, col));
+	memcpy(pieces, other.pieces, BoardSize*BoardSize*sizeof(Piece));
 	return *this;
 }
 
 Board::Board(const Board &other) {
 	pieceCount = other.pieceCount;
-	for (int row=0; row < BoardSize; row++)
-		for (int col=0; col < BoardSize; col++)
-			SetPiece(row, col, other.GetPiece(row, col));
+	memcpy(pieces, other.pieces, BoardSize*BoardSize*sizeof(Piece));
 }
 
 void Board::Clear() {
 	pieceCount = 0;
-	for (int row=0; row < BoardSize; row++)
-		for (int col=0; col < BoardSize; col++)
-			SetPiece(row, col, PieceNone);
+	memset(pieces, PieceNone, BoardSize*BoardSize*sizeof(Piece));
 }
 
 /*
@@ -61,13 +55,13 @@ void BoundsCheck(int row, int col) {
 }
 */
 
-inline void Board::SetPiece(int row, int col, Piece piece) {
+void Board::SetPiece(int row, int col, Piece piece) {
 	//BoundsCheck(row, col);
 	if (pieces[row*BoardSize+col] == PieceNone && piece != PieceNone) pieceCount++;
 	pieces[row*BoardSize+col] = piece;
 }
 
-inline Piece Board::GetPiece(int row, int col) const {
+Piece Board::GetPiece(int row, int col) const {
 	//BoundsCheck(row, col);
 	return pieces[row*BoardSize+col];
 }

@@ -1,5 +1,7 @@
 Debug/*
 Winoku/Debug/*
+Release/*
+Winoku/Release/*
 *.swp
 *.suo
 *.ncb
