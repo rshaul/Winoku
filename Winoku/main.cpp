@@ -24,6 +24,7 @@ using namespace std;
 // Each player gets 3 minutes
 #define PLAYER_TIME 3*60*1000	// in milliseconds
 
+// Threads improve UI responsiveness but can make debugging harder
 #define USE_THREADS false
 
 // Display configuration options
@@ -103,7 +104,7 @@ Winner WinnerForPlayer(Player *player) {
 
 // Play a single round of Gomoku
 void PlayRound() {
-	int row, col;
+	int row = -1, col = -1;
 	thinking = true;
 	WindowNeedsDisplay();
 
@@ -117,10 +118,14 @@ void PlayRound() {
 	assert(gameBoard.GetPiece(row, col) == PieceNone);
 	gameBoard.SetPiece(row, col, PieceForPlayer(currentPlayer));
 
+	// Notify other AI that a move has been made
+	start = GetTime();
 	(OtherPlayer())->OpponentDidMove(row, col);
+	SubtractTime(OtherPlayer(), start);
 
 	if (!gameBoard.IsSolved(row, col, winner)) {
-		currentPlayer = OtherPlayer(); // Swap players
+		// Game is not over swap players
+		currentPlayer = OtherPlayer();
 	}
 
 	WindowNeedsDisplay();
